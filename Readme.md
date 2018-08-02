@@ -6,8 +6,8 @@
 
 The goals / steps of this project are the following:
 * Use a simulator built on Unity to collect data of good driving behavior
-* Design a convolution neural network in Keras that predicts steering angles from images
-* Train and validate the model with a training and validation set
+* Design a convolutional neural network in Keras that predicts steering angles from images
+* Train and validate the model on an Amazon AWS EC2 instance
 * Test that the model successfully drives around the track without leaving the road
 
 ### Files:
@@ -32,35 +32,38 @@ The goals / steps of this project are the following:
 ---
 ### Approach
 
-In industry, approaches to behavioral cloning for self-driving cars varies. One common approach...
+In industry, autonomous vehicle development takes one of two design approaches. Both approaches employ artificial intelligence to interpret the vehicle's environment. They diverge on how they use the resulting signals to make driving decisions. The first approach uses a modular machine learning architecture where AI is applied selectively and decision-making is largely defined explicity by the design team. The second approach, called behavioral cloning or imitation learning, applies end-to-end AI where policy is learned from sampling driving behavior.
 
-To achieve a good result in this project, I chose...
+To achieve a good result in this project, I begin by overtraining the model to quickly produce a working outcome. The simulator contains relatively consistent road textures and lane boundaries so the final result doesn't depend on the model's ability to generalize it's decision-making. Then, I experiment with a couple methods to reduce noise to get smoother autonomous steering behavior.
 
 ### Model Architecture
 
-My model adopts a network architecture used by NVIDIA's self-driving team published in this [blog](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) (model.py lines 121-130).
+I use a network architecture previously published by NVIDIA's self-driving team in this [blog](https://devblogs.nvidia.com/deep-learning-self-driving-cars/) (model.py lines 121-130). There's benefit to starting with a proven architecture rather than re-architecting from scratch because the use cases are similar enough.
 
-The data is normalized in the model using a Keras lambda layer (model.py line 119). Then, I choose to activate each convolutional layer with the RELU function to introduce nonlinearity. 
+The data is normalized in the model using a Keras lambda layer (model.py line 119). Then, several convolutional layers are followed by a series of fully connected layers. I choose to activate each convolutional layer with the RELU function to introduce nonlinearity.
 
 ![alt text](examples/cnn-architecture.png)
 
 #### Attempts to reduce overfitting
 
-Rather than implementing dropout layers, I took a different approach to reduce overfitting and use as few training laps around the track as possible.
+Rather than implementing dropout layers, I take a different approach to reduce overfitting and use as few training laps around the track as possible. In this project, change in steering angle from frame to frame is a larger source of variation than the variety of terrain the camera sees.
 
-My pipeline takes a moving average of the angle measurements from the training data (model.py lines 21-25, 39-42). I decided on this approach because of the simulator's high sensitivity to keyboard steering controls during training. Before conditioning, the recorded data would have one frame with a large angle measurement following by several frames with zero degree angles. With the noise eliminated, the result yielded smoother driving behavior.
+Therefore, my pipeline calculates a moving average of the angle measurements from the training data (model.py lines 21-25, 39-42). I decided on this approach because of the simulator's high sensitivity to keyboard steering controls during training. Before conditioning, the recorded data would have one frame with a large angle measurement following by several frames with zero degree angles. With the noise eliminated, the result yielded smoother driving behavior.
 
 I also implemented subsampling on the training data but ultimately commented out the code (model.py line 71). I discuss this decision in the section titled "Solution Design Approach".
 
 #### Model parameter tuning
 
-Aside from typical neural network hyperparameters such as batch size and optimizer, my model includes a couple other important variables. Those are number of periods for the moving average and sample rate. 
+Aside from typical neural network hyperparameters such as batch size and optimizer, my model includes a couple other important variables. Those are number of periods for the moving average, sample rate, and image flip probability.
+* **nb_periods** (model.py line xx) - The number of angle measurements following the current sample to average
+* **sample_rate** (model.py line xx) - The decimal percentage of total samples to use for training
+* **p_flip** (model.py line xx) - The probability of adding a flipped version of the sample image to the dataset
 
-#### 4. Appropriate training data
+#### 4. Training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+I recorded a combination of center lane driving and recovering from the left and right sides of the road. Using the left and right cameras for training in addition to the center camera would make recovery data less important, but I choose the more expedient method here. Training the model on recovery data proved critical to completing a full lap around the track. Both cases serve to navigate the vehicle back to the lane's center, known as **stabalizing control**. Stabalizing control helps mitigate drift that builds up over time from small steering error.
 
-For details about how I created the training data, see the next section. 
+Since the track contains mostly left turns, I also augment the training data with flipped images and additive inverse angles. This helps the model perform better on the map's one right turn.
 
 ### Training Strategy
 
