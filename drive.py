@@ -15,6 +15,7 @@ from io import BytesIO
 from keras.models import load_model
 import h5py
 from keras import __version__ as keras_version
+from keras import Model
 
 sio = socketio.Server()
 app = Flask(__name__)
@@ -62,6 +63,20 @@ def telemetry(sid, data):
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
+
+        # # Extract intermediate layer output
+        # layer_name = 'first_convolution'
+        # intermediate_layer_model = Model(inputs=model.input,
+        #                                  outputs=model.get_layer(layer_name).output)
+        # intermediate_output = intermediate_layer_model.predict(image_array[None, :, :, :], batch_size=1)
+        # intermediate_output = np.squeeze(intermediate_output)
+        # intermediate_output = (255.0 / intermediate_output.max() * (intermediate_output - intermediate_output.min())).astype(np.uint8)
+        # intermediate_output_img = Image.fromarray(intermediate_output[12])
+        #
+        # # save intermediate output layer
+        # timestamp = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
+        # image_filename = os.path.join('/Users/evanloshin/Documents/Udacity/SDC/behavioral-cloning-data/Intermediate-Layer/', timestamp)
+        # intermediate_output_img.save('{}.jpg'.format(image_filename))
 
         throttle = controller.update(float(speed))
 
