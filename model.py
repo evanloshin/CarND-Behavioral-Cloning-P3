@@ -80,13 +80,13 @@ def generator(samples, batch_size=35):
 
                     # convert image from BGR to RGB
                     center_image = cv2.cvtColor(center_image_BGR, cv2.COLOR_BGR2RGB)
-                    left_image = cv2.cvtColor(left_image_BGR, cv2.COLOR_BGR2RGB)
-                    right_image = cv2.cvtColor(right_image_BGR, cv2.COLOR_BGR2RGB)
+                    #left_image = cv2.cvtColor(left_image_BGR, cv2.COLOR_BGR2RGB)
+                    #right_image = cv2.cvtColor(right_image_BGR, cv2.COLOR_BGR2RGB)
 
                     # read angle (moving average) for each image
                     center_angle = float(batch_sample[3])
-                    left_angle = float(batch_sample[4])
-                    right_angle = float(batch_sample[5])
+                    #left_angle = float(batch_sample[4])
+                    #right_angle = float(batch_sample[5])
 
                     # augmentation: flip every image on y-axis and take opposite angle
                     center_image_aug = cv2.flip(center_image, 1)
