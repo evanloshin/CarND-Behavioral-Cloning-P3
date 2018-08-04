@@ -2,20 +2,19 @@
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
-### Intro: Record driving behavior in a simulator to train a neural network that drives the car autonomously.
+### Record driving behavior in a simulator to train a neural network that drives the car autonomously.
 
 The goals / steps of this project are the following:
 * Use a simulator built on Unity to collect data of good driving behavior
 * Design a convolutional neural network in Keras that predicts steering angles from images
-* Train and validate the model on an Amazon AWS EC2 instance
+* Train and validate the model on an Amazon EC2 instance
 * Test that the model successfully drives around the track without leaving the road
 
 ### Files:
 
 * See [model.py](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/model.py) to view the pipeline that trains the model
 * [model.h5](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/model.h5) contains a trained Keras model
-* Watch [video.mp4](NEED LINK) to see a recording of the car driving autonomously around the track
-* [writeup.pdf](NEED LINK) is a pdf copy of this readme
+* Watch [video.mp4](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/video-images.mp4) to see a recording of the car driving autonomously around the track
 
 
 [//]: # (Image References)
@@ -30,7 +29,7 @@ The goals / steps of this project are the following:
 
 
 ---
-### Approach
+## Approach
 
 In industry, autonomous vehicle development takes one of two design approaches. Both approaches employ artificial intelligence to interpret the vehicle's environment. They diverge on how they use the resulting signals to make driving decisions. The first approach uses a modular machine learning architecture where AI is applied selectively and decision-making is largely defined explicity by the design team. The second approach, called behavioral cloning or imitation learning, applies end-to-end AI where policy is learned from sampling driving behavior.
 
@@ -42,7 +41,7 @@ I use a network architecture previously published by NVIDIA's self-driving team 
 
 The data is normalized in the model using a Keras lambda layer (model.py line 119). Then, several convolutional layers are followed by a series of fully connected layers. I choose to activate each convolutional layer with the RELU function to introduce nonlinearity.
 
-![alt text](examples/cnn-architecture.png)
+![alt text](./examples/cnn-architecture.png)
 
 #### Attempts to reduce overfitting
 
@@ -59,62 +58,39 @@ Aside from typical neural network hyperparameters such as batch size and optimiz
 * **sample_rate** (model.py line xx) - The decimal percentage of total samples to use for training
 * **p_flip** (model.py line xx) - The probability of adding a flipped version of the sample image to the dataset
 
-#### 4. Training data
+#### Training Strategy
 
 I recorded a combination of center lane driving and recovering from the left and right sides of the road. Using the left and right cameras for training in addition to the center camera would make recovery data less important, but I choose the more expedient method here. Training the model on recovery data proved critical to completing a full lap around the track. Both cases serve to navigate the vehicle back to the lane's center, known as **stabalizing control**. Stabalizing control helps mitigate drift that builds up over time from small steering error.
 
 Since the track contains mostly left turns, I also augment the training data with flipped images and additive inverse angles. This helps the model perform better on the map's one right turn.
 
-### Training Strategy
+#### Creation of the Training Set & Training Process
 
-#### 1. Solution Design Approach
+To capture good driving behavior, I recorded one lap around the track in each direction.
 
-The overall strategy for deriving a model architecture was to ...
+I then recorded the vehicle recovering from the left side and right sides of the road back to center. This image show what a recovery looks like starting from the right side:
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+![alt text](./examples/Training_Correction.png)
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+After the collection process, I had 15,618 data points. Since the simulator outputs images in BGR color channels during training mode but outputs them in RGB during autonomous mode, I then preprocessed this data by converting images to RGB. This way, the model would train on images consistent with the ones it will predict.
 
-To combat the overfitting, I modified the model so that ...
+To augment the data sat, I also flipped images and angles. Here is the result of flipping an image:
 
-Then I ... 
+![alt text](./examples/Flipping.png)
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+I finally randomly shuffled the data set and put 20% of the data into a validation set. The validation set helped determine if the model was over or under fitting. Only one epoch is used as evidenced by the increase in training and validation loss in every subsequent epoch. Finally, I use an adam optimizer to automatically tune the learning rate.
 
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+## Conclusion
+The model performed as hoped for this project's limited scope. In practice, overfitting needs to be further minimized so the model can generalize it's behavior to unseen variations of the training data. This is especially true for fringe scenarios. For instance, training the model to avoid an object in the lane would be problematic if the type of object encountered differs from the one in training.
 
-#### 2. Final Model Architecture
+Data quantity is also an issue. Training a model on every inch of terrain at 30FPS requires staggering storage and time, even within a geofenced region. In practice, augmenting and running fewer "key" images through the model for a number of epochs is more practical. In fact, the model can be built to decide for itself which images are most important. This approach is called [active learning](http://slais.ijs.si/theses/2013-11-14-Mirchevska.pdf).
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+## References
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
+Nvidia Architecture: https://devblogs.nvidia.com/deep-learning-self-driving-cars/
 
-![alt text][image1]
+Active Learning: http://slais.ijs.si/theses/2013-11-14-Mirchevska.pdf
 
-#### 3. Creation of the Training Set & Training Process
+https://medium.com/@jmitchell1991/behavioral-cloning-self-driving-car-simulation-14531358c87e
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
-![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+https://medium.com/@fromtheast/you-dont-need-lots-of-data-udacity-behavioral-cloning-6d2d87316c52
