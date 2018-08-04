@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d214dae8-2cae-4287-ada7-757b6ee2daa9" name="Default" comment="Add architecture image to readme">
+    <list default="true" id="d214dae8-2cae-4287-ada7-757b6ee2daa9" name="Default" comment="Add final video">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.h5" beforeDir="false" afterPath="$PROJECT_DIR$/model.h5" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drive.py" beforeDir="false" afterPath="$PROJECT_DIR$/drive.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -18,8 +19,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="101">
-              <caret line="88" column="21" selection-start-line="88" selection-start-column="21" selection-end-line="88" selection-end-column="21" />
+            <state relative-caret-position="420">
+              <caret line="28" column="12" lean-forward="true" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -31,8 +32,8 @@
         <entry file="file://$PROJECT_DIR$/Readme.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="227">
-                <caret line="49" selection-start-line="49" selection-end-line="49" />
+              <first_editor relative-caret-position="1425">
+                <caret line="95" column="97" selection-start-line="95" selection-start-column="97" selection-end-line="95" selection-end-column="97" />
               </first_editor>
               <second_editor />
             </state>
@@ -42,8 +43,8 @@
       <file leaf-file-name="drive.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/drive.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="72" column="49" selection-start-line="72" selection-start-column="49" selection-end-line="72" selection-end-column="49" />
+            <state relative-caret-position="375">
+              <caret line="84" selection-start-line="84" selection-end-line="84" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -68,9 +69,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/clone.py" />
-        <option value="$PROJECT_DIR$/drive.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/writeup_template.md" />
+        <option value="$PROJECT_DIR$/drive.py" />
         <option value="$PROJECT_DIR$/Readme.md" />
         <option value="$PROJECT_DIR$/model.py" />
       </list>
@@ -170,14 +171,28 @@
       <option name="project" value="LOCAL" />
       <updated>1533193585205</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Squash some bugs">
+      <created>1533270718162</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1533270718162</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Add final video">
+      <created>1533270798443</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1533270798443</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1280" height="773" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18046875" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18046875" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Messages" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
@@ -250,7 +265,9 @@
     <MESSAGE value="Add my own readme (delete old)" />
     <MESSAGE value="Add my own readme (add new)" />
     <MESSAGE value="Add architecture image to readme" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add architecture image to readme" />
+    <MESSAGE value="Squash some bugs" />
+    <MESSAGE value="Add final video" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add final video" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/model.py">
@@ -293,8 +310,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/drive.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="72" column="49" selection-start-line="72" selection-start-column="49" selection-end-line="72" selection-end-column="49" />
+        <state relative-caret-position="375">
+          <caret line="84" selection-start-line="84" selection-end-line="84" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -304,8 +321,8 @@
     <entry file="file://$PROJECT_DIR$/Readme.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="227">
-            <caret line="49" selection-start-line="49" selection-end-line="49" />
+          <first_editor relative-caret-position="1425">
+            <caret line="95" column="97" selection-start-line="95" selection-start-column="97" selection-end-line="95" selection-end-column="97" />
           </first_editor>
           <second_editor />
         </state>
@@ -313,8 +330,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="88" column="21" selection-start-line="88" selection-start-column="21" selection-end-line="88" selection-end-column="21" />
+        <state relative-caret-position="420">
+          <caret line="28" column="12" lean-forward="true" selection-start-line="28" selection-start-column="12" selection-end-line="28" selection-end-column="12" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>

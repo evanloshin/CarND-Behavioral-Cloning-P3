@@ -1,4 +1,5 @@
-# required to view plots on AWS instance
+##################### IMPORT STATEMENTS #####################
+# required to view plots on AWS instance - must come first
 from typing import List
 import matplotlib
 matplotlib.use('Agg')
@@ -7,10 +8,23 @@ matplotlib.use('Agg')
 import csv
 import cv2
 import numpy as np
+import random
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
+from keras.models import Sequential
+from keras.layers import Flatten, Activation, Cropping2D, Dense, Lambda, Dropout
+from keras.layers.convolutional import Conv2D
 
+
+#################### SET HYPERPARAMETERS ####################
+nb_periods = 10
+sample_rate = 1.0
+p_flip = 0.3
+batch_size = 30
+
+
+################# IMPORT & PRECONDITION DATA ################
 # read driving log file
 samples = []
 with open('driving_log.csv') as csvfile:
@@ -18,7 +32,7 @@ with open('driving_log.csv') as csvfile:
     for line in reader:
         samples.append(line)
 
-# convert array values to a moving average
+# function to convert array values to a moving average
 def moving_average(angles, width):
     cumsum_vec = np.cumsum(np.insert(angles, 0, 0))
     mvavg_vec = (cumsum_vec[width:] - cumsum_vec[:-width]) / width
@@ -33,16 +47,13 @@ for sample in samples:
     left_angles.append(float(sample[4]))
     right_angles.append(float(sample[5]))
 
-# set moving average period
-n_period = 10
-
 # take moving average of the angles
-center_angles_mv = moving_average(center_angles, n_period)
-left_angles_mv = moving_average(left_angles, n_period)
-right_angles_mv = moving_average(right_angles, n_period)
+center_angles_mv = moving_average(center_angles, nb_periods)
+left_angles_mv = moving_average(left_angles, nb_periods)
+right_angles_mv = moving_average(right_angles, nb_periods)
 
 # adjust samples to account for moving average stopping (n_period - 1) short of the last sample
-del samples[-n_period+1:]
+del samples[-nb_periods+1:]
 
 # write moving averages back to samples
 for idx, sample in enumerate(samples):
@@ -53,11 +64,21 @@ for idx, sample in enumerate(samples):
 # reserve some data for validation
 train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 
+
+#################### GENERATOR FUNCTION #####################
 # implement generator to conserve memory
 def generator(samples, batch_size=35):
+
+    # declare global variables
+    global sample_rate
+    global p_flip
+
     num_samples = len(samples)
+
     while 1:
+
         shuffle(samples)
+
         for offset in range(0, num_samples, batch_size):
 
             batch_samples = samples[offset:offset+batch_size]
@@ -67,8 +88,8 @@ def generator(samples, batch_size=35):
 
             for idx, batch_sample in enumerate(batch_samples):
 
-                # uncomment next line to train on fewer samples
-                #if idx % 20 == 0:
+                    if idx == sample_rate * num_samples:
+                        break
 
                     # read image file for each camera
                     center_path = './IMG/' + batch_sample[0].split('/')[-1]
@@ -88,15 +109,18 @@ def generator(samples, batch_size=35):
                     #left_angle = float(batch_sample[4])
                     #right_angle = float(batch_sample[5])
 
-                    # augmentation: flip every image on y-axis and take opposite angle
-                    center_image_aug = cv2.flip(center_image, 1)
-                    center_angle_aug = center_angle * -1
+                    # flip some percentage of images
+                    if random.randint(1, 100) > p_flip * 100:
+                        # augmentation: flip every image on y-axis and take opposite angle
+                        center_image_aug = cv2.flip(center_image, 1)
+                        center_angle_aug = center_angle * -1
+                        # append flipped images and angles to arrays
+                        images.append(center_image_aug)
+                        angles.append(center_angle_aug)
 
                     # append images and angles to arrays
                     images.append(center_image)
                     angles.append(center_angle)
-                    images.append(center_image_aug)
-                    angles.append(center_angle_aug)
                     # images.append(left_image)
                     # angles.append(left_angle)
                     # images.append(right_image)
@@ -107,14 +131,8 @@ def generator(samples, batch_size=35):
             y_train = np.array(angles)
             yield shuffle(X_train, y_train)
 
-# keras-specific dependencies
-from keras.models import Sequential
-from keras.layers import Flatten, Activation, Cropping2D, Dense, Lambda, Dropout
-from keras.layers.convolutional import Conv2D
 
-# set batch size
-batch_size = 30
-
+#################### MODEL ARCHITECTURE #####################
 model = Sequential()
 model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160, 320, 3)))
 model.add(Cropping2D(cropping=((70, 25), (0, 0))))
@@ -129,6 +147,8 @@ model.add(Dense(50))
 model.add(Dense(10))
 model.add(Dense(1))
 
+
+################## CONFIGURE & RUN MODEL ####################
 # create generator for each dataset
 train_generator = generator(train_samples, batch_size)
 validation_generator = generator(validation_samples, batch_size)
@@ -137,10 +157,15 @@ validation_generator = generator(validation_samples, batch_size)
 model.compile(loss='mse', optimizer='adam')
 history_object = model.fit_generator(train_generator, \
                                      epochs=1, \
-                                     steps_per_epoch=len(train_samples)/batch_size*2, \
+                                     steps_per_epoch=len(train_samples)*sample_rate/batch_size, \
                                      validation_data=validation_generator, \
-                                     validation_steps=len(validation_samples)/batch_size*2)
+                                     validation_steps=len(validation_samples)*sample_rate/batch_size)
 
+# save model to be used in drive.py
+model.save('model.h5')
+
+
+####################### PLOT METRICS #########################
 # plot the training and validation loss for each epoch
 # plt.plot(history_object.history['loss'])
 # plt.plot(history_object.history['val_loss'])
@@ -149,6 +174,3 @@ history_object = model.fit_generator(train_generator, \
 # plt.xlabel('epoch')
 # plt.legend(['training set', 'validation set'], loc='upper right')
 # plt.savefig('loss.png')
-
-# save model to be used in drive.py
-model.save('model.h5')

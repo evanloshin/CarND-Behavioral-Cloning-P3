@@ -80,7 +80,7 @@ def telemetry(sid, data):
 
         throttle = controller.update(float(speed))
 
-        print(steering_angle, throttle)
+        print("Predicted Steering Angle: {}    Throttle: {}".format(round(steering_angle, 5), round(throttle, 5)))
         send_control(steering_angle, throttle)
 
         # save frame
