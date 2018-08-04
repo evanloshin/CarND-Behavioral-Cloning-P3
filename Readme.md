@@ -14,7 +14,7 @@ The goals / steps of this project are the following:
 
 * See [model.py](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/model.py) to view the pipeline that trains the model
 * [model.h5](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/model.h5) contains a trained Keras model
-* Watch [video.mp4](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/video-images.mp4) to see a recording of the car driving autonomously around the track
+* Watch [video.mp4](https://github.com/evanloshin/CarND-Behavioral-Cloning-P3/blob/master/video.mp4) to see a recording of the car driving autonomously around the track
 
 
 [//]: # (Image References)
